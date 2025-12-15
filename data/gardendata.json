@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Apple",
+        "class": "FRUITTREE"
+    },
+    {
+        "name": "Pear",
+        "class": "FRUITTREE"
+    },
+    {
+        "name": "Carrot",
+        "class": "VEGETABLE"
+    }
+]
