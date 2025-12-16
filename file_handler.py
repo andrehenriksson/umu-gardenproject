@@ -1,6 +1,6 @@
 import json
 
-from plants import (
+from plant import (
     Vegetable,
     FruitTree,
 )
