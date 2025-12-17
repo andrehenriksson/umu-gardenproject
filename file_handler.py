@@ -7,11 +7,6 @@ from plant import (
 
 from garden import GardenContainer
 
-class SetEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, set):
-            return list(obj)
-        return json.JSONEncoder.default(self, obj)
 class SaveHandler:
     def __init__(self, garden_data_file):
         self.garden_data_file = garden_data_file
@@ -33,7 +28,7 @@ class SaveHandler:
             print(f"Error writing to output file {self.garden_data_file}: {e}")
             raise
 
-class FileHandler:
+class ReadHandler:
     def __init__(self, garden_data_file):
         self.garden = GardenContainer()
         self._read_json_input(garden_data_file, self._initialize_garden)
@@ -73,42 +68,3 @@ class FileHandler:
             else:
                 raise ValueError(f"Unknown plant class {garden_class}")
             self.garden.add_plant(plant)
-
-    def writefile():
-        # Writing to a new file (or overwriting an existing one)
-        with open("my_file.txt", "w") as f:
-            f.write("This is the first line.\n")
-            f.write("This is the second line.\n")
-            f.write("And this is the last line.")
-
-        # Appending to an existing file
-        with open("my_file.txt", "a") as f:
-            f.write("\nAdding a new line to the end.")
-
-        # Writing with string formatting
-        name = "Alice"
-        age = 30
-        with open("user_data.txt", "w") as f:
-            f.write(f"Name: {name}\n")
-            f.write(f"Age: {age}\n")
-            
-    def readfile():
-        #import json
-
-        # Python dictionary
-        data = {
-            "name": "Alice",
-            "age": 30,
-            "isStudent": False,
-            "courses": ["Math", "Science"]
-        }
-
-        # Serialize to JSON string
-        json_string = json.dumps(data, indent=4) # indent for pretty-printing
-        print("JSON String:")
-        print(json_string)
-
-        # Write to a JSON file
-        with open("data.json", "w") as f:
-            json.dump(data, f, indent=4)
-        print("\nData written to data.json")

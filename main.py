@@ -1,5 +1,5 @@
 
-from file_handler import FileHandler, SaveHandler
+from file_handler import ReadHandler, SaveHandler
 import pest
 import plant
 
@@ -22,7 +22,7 @@ def init_file_handler(garden_data_file):
     garden : GardenContainer
         The initialized garden object.
     """
-    file_handler = FileHandler(garden_data_file)
+    file_handler = ReadHandler(garden_data_file)
     return file_handler.garden
 
 def print_menu():

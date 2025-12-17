@@ -38,7 +38,7 @@
             50
         ],
         "yields_per_week": {
-            "50": 9.0
+            "50": 50.0
         }
     },
     {
@@ -48,7 +48,17 @@
             36
         ],
         "yields_per_week": {
-            "36": 3.0
+            "36": 36.0
+        }
+    },
+    {
+        "name": "apple",
+        "class": "FRUITTREE",
+        "harvest_weeks": [
+            3
+        ],
+        "yields_per_week": {
+            "3": 13
         }
     }
 ]
