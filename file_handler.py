@@ -7,6 +7,32 @@ from plant import (
 
 from garden import GardenContainer
 
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
+class SaveHandler:
+    def __init__(self, garden_data_file):
+        self.garden_data_file = garden_data_file
+    def _save_garden(self, garden):
+        """Saves the garden data to a JSON file."""
+        garden_data = []
+        for plant in garden.plants.values():
+            plant_data = {
+                "name": plant.name,
+                "class": "VEGETABLE" if isinstance(plant, Vegetable) else "FRUITTREE",
+                "harvest_weeks": list(plant.harvest_weeks),
+                "yields_per_week": plant.yields_per_week,
+            }
+            garden_data.append(plant_data)
+        try:
+            with open(self.garden_data_file, mode="w", encoding="utf-8") as out_file:
+                json.dump(garden_data, out_file, indent=4)
+        except IOError as e:
+            print(f"Error writing to output file {self.garden_data_file}: {e}")
+            raise
+
 class FileHandler:
     def __init__(self, garden_data_file):
         self.garden = GardenContainer()
@@ -25,11 +51,15 @@ class FileHandler:
     def _create_vegetable(self, entry):
         return Vegetable(
             plant_name=entry.get("name"),
+            harvest_weeks=entry.get("harvest_weeks", []),
+            yields_per_week=entry.get("yields_per_week", {}),
         )
 
     def _create_fruittree(self, entry):
         return FruitTree(
             plant_name=entry.get("name"),
+            harvest_weeks=entry.get("harvest_weeks", []),
+            yields_per_week=entry.get("yields_per_week", {}),
         )
     
     def _initialize_garden(self, garden_data):

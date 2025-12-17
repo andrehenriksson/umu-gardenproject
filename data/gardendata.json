@@ -1,14 +1,54 @@
 [
     {
         "name": "Apple",
-        "class": "FRUITTREE"
-    },
-    {
-        "name": "Pear",
-        "class": "FRUITTREE"
+        "class": "FRUITTREE",
+        "harvest_weeks": [
+            51,
+            52
+        ],
+        "yields_per_week": {
+            "51": 51.0,
+            "52": 52.0
+        }
     },
     {
         "name": "Carrot",
-        "class": "VEGETABLE"
+        "class": "VEGETABLE",
+        "harvest_weeks": [
+            2
+        ],
+        "yields_per_week": {
+            "2": 2.0
+        }
+    },
+    {
+        "name": "tomato",
+        "class": "VEGETABLE",
+        "harvest_weeks": [
+            5
+        ],
+        "yields_per_week": {
+            "5": 5.0
+        }
+    },
+    {
+        "name": "lettuce",
+        "class": "VEGETABLE",
+        "harvest_weeks": [
+            50
+        ],
+        "yields_per_week": {
+            "50": 9.0
+        }
+    },
+    {
+        "name": "lettuce2",
+        "class": "VEGETABLE",
+        "harvest_weeks": [
+            36
+        ],
+        "yields_per_week": {
+            "36": 3.0
+        }
     }
 ]

@@ -49,6 +49,21 @@ class Plant:
         """
         self.harvest_weeks.add(week)
 
+    def add_harvest_weeks(self, weeks: list):
+        """Adds a week when the plant can be harvested.
+
+        Parameters
+        ----------
+        week : int
+            The week number when the plant can be harvested.
+
+        Returns
+        ----------
+        None
+        """
+        for week in weeks:
+            self.harvest_weeks.add(int(week))
+
     def add_yield_for_week(self, week: int, yield_amount: float):
         """Adds a yield amount for a specific week.
 
@@ -64,6 +79,23 @@ class Plant:
         None
         """
         self.yields_per_week[week] = yield_amount
+
+    def add_yield_for_weeks(self, weeks: list, yield_amounts: list):
+        """Adds a yield amount for a specific week.
+
+        Parameters
+        ----------
+        week : int
+            The week number when the plant can be harvested.
+        yield_amount : float
+            The yield amount for that week.
+
+        Returns
+        ----------
+        None
+        """
+        for week, yield_amount in zip(weeks, yield_amounts):
+            self.yields_per_week[week] = float(yield_amount)
     
     def calculate_yield(self, year:int, week:int, active_pests:list, traceflag:bool=False) -> float:
         """Calculates the yield for a specific week considering active pests.
@@ -118,21 +150,34 @@ class Plant:
 
 class Vegetable(Plant):
     "Docstrings for Vegetable class is inherited from Plant class. "
-    def __init__(self, plant_name: str):
+    def __init__(self, plant_name: str, harvest_weeks=None, yields_per_week=None, debug: bool=False):
         super().__init__(plant_name)
 
-        tmp_week = random.randint(1, 52)
-        tmp_yield = random.randint(1, 15)
-        super().add_harvest_week(tmp_week)
-        super().add_yield_for_week(tmp_week, tmp_yield)
+        if debug:
+            print(f"Initializing Vegetable: {plant_name} with harvest_weeks: {harvest_weeks} and yields_per_week: {yields_per_week}")
+
+        if harvest_weeks is None:
+            harvest_weeks = [random.randint(1, 52)]
+        if yields_per_week is None:
+            yields_per_week = [random.randint(1, 15)]
+
+        super().add_harvest_weeks(harvest_weeks)
+        super().add_yield_for_weeks(harvest_weeks, yields_per_week)
 
 class FruitTree(Plant):
     "Docstrings for FruitTree class is inherited from Plant class. "
-    def __init__(self, plant_name: str):
+    def __init__(self, plant_name: str, harvest_weeks=None, yields_per_week=None, debug: bool=False):
         super().__init__(plant_name)
 
-        for i in range(random.randint(1, 5)):
-            tmp_week = random.randint(1, 52)
-            tmp_yield = random.randint(10, 50)
+        if debug:
+            print(f"Initializing FruitTree: {plant_name} with harvest_weeks: {harvest_weeks} and yields_per_week: {yields_per_week}")
+
+        if harvest_weeks is None or yields_per_week is None:
+            for i in range(random.randint(1, 5)):
+                tmp_week = random.randint(1, 52)
+                tmp_yield = random.randint(10, 50)
             super().add_harvest_week(tmp_week)
             super().add_yield_for_week(tmp_week, tmp_yield)
+        else:
+            super().add_harvest_weeks(harvest_weeks)
+            super().add_yield_for_weeks(harvest_weeks, yields_per_week)

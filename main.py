@@ -1,5 +1,5 @@
 
-from file_handler import FileHandler
+from file_handler import FileHandler, SaveHandler
 import pest
 import plant
 
@@ -33,14 +33,16 @@ def print_menu():
     print("\n")
     print("Garden Manager menu:\n")
     print("s - show all plants (sorted alphabetically) and pests (sorted by week)\n")
-    print("v - add vegetable")
-    print("f - add fruit tree")
-    print("h - harvest (list the yield for all plants in the garden)")
+    print("v - add vegetable [vegetable_name]")
+    print("f - add fruit tree [fruit_tree_name]")
+    print("h - harvest (list the yield for all plants in the garden) ")
     print("c - care for garden")
-    print("p - add pest")
+    print("p - add pest [pest_name affected_plant week_detected]")
     print("q - quit the program")
     print("m - show menu")
-    print("set - set year and week")
+    print("set - set year and week [year week]")
+    print("save - save garden to file")
+    print("sim - simulate multiple weeks [start_year start_week end_year end_week]")
 
     print("\n")
 
@@ -54,66 +56,13 @@ if __name__ == "__main__":
 
     while(True):
         print("\n")
-        print("-"*20)
+        print("-"*40)
         print("\n")
         user_input = input("Please choose an option (type m to see the menu): ").lower().strip()
         user_input_parts = user_input.split()
         user_command = user_input_parts[0].lower().strip()
 
-        if len(user_input_parts) == 2 and user_command == 'debug':
-            try:
-                tmp_debug = str(user_input_parts[1].lower().strip())
-
-                if tmp_debug in ['true', '1', 'yes']:
-                    debug = True
-                elif tmp_debug in ['false', '0', 'no']:
-                    debug = False
-                else:
-                    print("Invalid debug value. Please enter true/false, 1/0, or yes/no.")
-                    print("\n")
-            except ValueError:
-                print("Invalid input. Please enter a valid debug value.")
-            continue
-
-        if len(user_input_parts) == 3 and user_command == 'set':
-            try:
-                new_year = int(user_input_parts[1])
-                new_week = int(user_input_parts[2])
-                if new_year >= currentYear and 1 <= new_week <= 52:
-                    currentYear = new_year
-                    currentWeek = new_week
-                    print(f"Date updated to Year: {currentYear}, Week: {currentWeek}")
-                    print("\n")
-                else:
-                    print("Invalid year or week. Please ensure the year is not in the past and the week is between 1 and 52.")
-                    print("\n")
-            except ValueError:
-                print("Invalid input. Please enter numeric values for year and week.")
-            continue
-
-
-        if len(user_input_parts) == 4 and user_command == 'p':
-            try:
-                pest_name = user_input_parts[1]
-                affected_plant = str(user_input_parts[2].lower().strip())
-                week_detected = int(user_input_parts[3])
-
-                print(f"Adding pest: {pest_name}, Affected Plant: {affected_plant}, Week Detected: {week_detected}, type: {type(affected_plant)}")
-
-                if affected_plant not in ["fruittree", "vegetable"]:
-                    print("Invalid affected plant. It must be either 'FruitTree' or 'Vegetable'.")
-                    continue
-                if week_detected < 1 or week_detected > 52:
-                    print("Invalid week detected. It must be between 1 and 52.")
-                    continue
-
-                new_pest = pest.Pest(pest_name, affected_plant, week_detected)
-                garden_object.add_pest(new_pest)
-            except ValueError as e:
-                print(f"Error adding pest: {e}")
-            continue
-
-        if user_command in ['s', 'v', 'f', 'h', 'c', 'p', 'q', 'm']:
+        if user_command in ['s', 'v', 'f', 'h', 'c', 'p', 'q', 'm', 'set', 'debug', 'save', 'sim']:
             if user_command == 'q':
                 print("\n")
                 print('Goodbye!')
@@ -129,12 +78,26 @@ if __name__ == "__main__":
 #                    print(plant_name["name"])
             elif user_command == 'v':
                 print('Adding vegetable...')
-                tmp_vegetable = plant.Vegetable("Vegetable1")
-                garden_object.add_plant(tmp_vegetable)
+                if len(user_input_parts) == 2:
+                    try:
+                        vegetable_name = user_input_parts[1]
+
+                        tmp_vegetable = plant.Vegetable(vegetable_name)
+                        garden_object.add_plant(tmp_vegetable)
+                    except ValueError as e:
+                        print(f"Error adding vegetable: {e}")
+                    continue
             elif user_command == 'f':
                 print('Adding fruit tree...')
-                tmp_fruittree = plant.FruitTree("FruitTree1")
-                garden_object.add_plant(tmp_fruittree)
+                if len(user_input_parts) == 2:
+                    try:
+                        fruit_tree_name = user_input_parts[1]
+
+                        tmp_fruittree = plant.FruitTree(fruit_tree_name)
+                        garden_object.add_plant(tmp_fruittree)
+                    except ValueError as e:
+                        print(f"Error adding fruit tree: {e}")
+                    continue
             elif user_command == 'h':
                 print('Harvesting garden...')
                 total_yield = garden_object.harvest(currentYear, currentWeek, traceflag=debug)
@@ -144,7 +107,78 @@ if __name__ == "__main__":
                 garden_object.care_for_garden()
             elif user_command == 'p':
                 print('Adding pest...')
-                tmp_pest = pest.Pest("Pest1", "Vegetable", 12)
-                garden_object.add_pest(tmp_pest)
-        else:
-            print('Invalid command, please try again. Type m to see the menu.')
+                if len(user_input_parts) == 4:
+                    try:
+                        pest_name = user_input_parts[1]
+                        affected_plant = str(user_input_parts[2].lower().strip())
+                        week_detected = int(user_input_parts[3])
+
+                        print(f"Adding pest: {pest_name}, Affected Plant: {affected_plant}, Week Detected: {week_detected}, type: {type(affected_plant)}")
+
+                        if affected_plant not in ["fruittree", "vegetable"]:
+                            print("Invalid affected plant. It must be either 'FruitTree' or 'Vegetable'.")
+                            continue
+                        if week_detected < 1 or week_detected > 52:
+                            print("Invalid week detected. It must be between 1 and 52.")
+                            continue
+
+                        new_pest = pest.Pest(pest_name, affected_plant, week_detected)
+                        garden_object.add_pest(new_pest)
+                    except ValueError as e:
+                        print(f"Error adding pest: {e}")
+                    continue
+
+            elif user_command == 'save':
+                file_handler = SaveHandler(GARDEN_DATA_FILE)
+                file_handler._save_garden(garden_object)
+                print("Garden saved to garden_data.json")
+            elif user_command == 'set':
+                if len(user_input_parts) == 3:
+                    try:
+                        new_year = int(user_input_parts[1])
+                        new_week = int(user_input_parts[2])
+                        if new_year >= currentYear and 1 <= new_week <= 52:
+                            currentYear = new_year
+                            currentWeek = new_week
+                            print(f"Date updated to Year: {currentYear}, Week: {currentWeek}")
+                            print("\n")
+                        else:
+                            print("Invalid year or week. Please ensure the year is not in the past and the week is between 1 and 52.")
+                            print("\n")
+                    except ValueError:
+                        print("Invalid input. Please enter numeric values for year and week.")
+                    continue
+            elif user_command == 'debug':
+                if len(user_input_parts) == 2:
+                    try:
+                        tmp_debug = str(user_input_parts[1].lower().strip())
+
+                        if tmp_debug in ['true', '1', 'yes']:
+                            debug = True
+                        elif tmp_debug in ['false', '0', 'no']:
+                            debug = False
+                        else:
+                            print("Invalid debug value. Please enter true/false, 1/0, or yes/no.")
+                            print("\n")
+                    except ValueError:
+                        print("Invalid input. Please enter a valid debug value.")
+                    continue
+            elif user_command == 'sim':
+                if len(user_input_parts) == 5:
+                    try:
+                        start_year = int(user_input_parts[1])
+                        start_week = int(user_input_parts[2])
+                        end_year = int(user_input_parts[3])
+                        end_week = int(user_input_parts[4])
+
+                        for year in range(start_year, end_year + 1):
+                            week_start = start_week if year == start_year else 1
+                            week_end = end_week if year == end_year else 52
+                            for week in range(week_start, week_end + 1):
+                                total_yield = garden_object.harvest(year, week, traceflag=debug)
+                                print(f'Year {year}, Week {week}, Total Yield: {total_yield}')
+                    except ValueError:
+                        print("Invalid input. Please enter numeric values for year and week.")
+                    continue
+            else:
+                print('Invalid command, please try again. Type m to see the menu.')
